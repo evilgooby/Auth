@@ -11,15 +11,18 @@ import (
 type Auth struct {
 	GUID string `json:"guid"`
 }
-
 type RefreshToken struct {
-	Token    Auth      `json:"token"`
-	ExpireAt time.Time `json:"expire_at"`
+	Guid     Auth  `json:"token"`
+	ExpireAt int64 `json:"expire_at"`
 }
-
 type TokenPair struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+}
+type ClientRefreshToken struct {
+	Ip           string `json:"ip"`
+	RefreshToken string `json:"refresh_token"`
+	ExpireAt     int64  `json:"expires_in"`
 }
 
 const (
@@ -29,8 +32,8 @@ const (
 // Генерация JWT токена
 func GenerateAccessToken(GUID Auth) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"exp":  time.Now().Add(time.Minute * 120).Unix(),
-		"guid": GUID.GUID,
+		"ExpireAt": time.Now().Add(time.Minute * 120).Unix(),
+		"Guid":     GUID.GUID,
 	})
 	tokenString, err := token.SignedString([]byte(signingKey))
 	if err != nil {
@@ -41,8 +44,7 @@ func GenerateAccessToken(GUID Auth) (string, error) {
 
 // Генерация Refresh токена
 func GenerateRefreshToken(t *RefreshToken) (string, error) {
-	t.ExpireAt = time.Now().Add(time.Hour * 720)
-	refreshToken := []byte(t.ExpireAt.String())
+	refreshToken := []byte(t.Guid.GUID)
 	hashRefreshToken, err := bcrypt.GenerateFromPassword(refreshToken, bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -52,16 +54,25 @@ func GenerateRefreshToken(t *RefreshToken) (string, error) {
 }
 
 // Проверка Refresh токена
-func VerifyRefreshToken(oldToken string, newToken string) error {
+func VerifyRefreshToken(newToken string, guid string) error {
 	hashRefreshToken, err := base64.StdEncoding.DecodeString(newToken)
 	if err != nil {
 		return err
 	}
-	err = bcrypt.CompareHashAndPassword(hashRefreshToken, []byte(oldToken))
+	err = bcrypt.CompareHashAndPassword(hashRefreshToken, []byte(guid))
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// Проверка Refresh токена на изменения на стороне клиента
+func VerifyClientRefreshToken(tokenBD, tokenClient string) error {
+	if tokenClient == tokenBD {
+		return nil
+	} else {
+		return fmt.Errorf("Токен изменен на стороне клиента")
+	}
 }
 
 func ParseToken(access string) (string, error) {
@@ -79,12 +90,7 @@ func ParseToken(access string) (string, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		// Получаем значения из токена
-		exp, _ := claims["exp"].(float64)
-		guid, _ := claims["guid"].(string)
-
-		fmt.Println("exp:", exp)
-		fmt.Println("guid:", guid)
+		guid, _ := claims["Guid"].(string)
 		return guid, nil
 	} else {
 		panic("Токен недействителен")

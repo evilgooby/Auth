@@ -3,7 +3,6 @@ package controller
 import (
 	"Auth/auth"
 	"Auth/internal/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -16,8 +15,8 @@ func AddToken(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON provided"})
 		return
 	}
-	log.Println(aut)
-	token := service.HandleTokenRequest(aut)
+	clientIP := c.ClientIP()
+	token := service.HandleTokenRequest(aut, clientIP)
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  token.AccessToken,
 		"refresh_token": token.RefreshToken,
@@ -30,12 +29,11 @@ func RefreshToken(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON provided"})
 		return
 	}
-	fmt.Println(tokenPair)
-	token, err := service.HandleRefreshTokenRequest(tokenPair)
+	clientIP := c.ClientIP()
+	token, err := service.HandleRefreshTokenRequest(tokenPair, clientIP)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(token)
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  token.AccessToken,
 		"refresh_token": token.RefreshToken,

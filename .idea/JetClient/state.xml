@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JetClientState">
+    <option name="draftsState">
+      <draftsState>
+        <option name="requests">
+          <list>
+            <requestState>
+              <option name="body">
+                <bodyState>
+                  <option name="raw" value="{&#10;   &quot;guid&quot;: &quot;773697bb-3c65-459c-8aaa-d3cb5e90233g&quot;&#10;}" />
+                  <option name="type" value="JSON" />
+                </bodyState>
+              </option>
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/json" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="d6cea696-e56a-4e54-9fa9-a1cec2c3d821" />
+              <option name="method" value="POST" />
+              <option name="name" value="Draft" />
+              <option name="url" value="http://localhost:8080/addToken" />
+            </requestState>
+            <requestState>
+              <option name="body">
+                <bodyState>
+                  <option name="raw" value="{&#10;  &quot;access_token&quot;: &quot;eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJFeHBpcmVBdCI6MTcyMzUwNTgzMywiR3VpZCI6Ijc3MzY5N2JiLTNjNjUtNDU5Yy04YWFhLWQzY2I1ZTkwMjMzZyJ9.B1b0KrbFJGWiNtyhHbDMviNUGpp0uEJVfcPK5RvxpBSXMfFzmbXEJiQ4h0Gw4x2AJR8frpVRko6tvoWuYUSUGw&quot;,&#10;  &quot;refresh_token&quot;: &quot;JDJhJDEwJEw2N0JkRUZhNjdiMy43TVJDZDhWN2VoRVNNOThDLjF6Y3ZwUDI1VEhFOHJkRHhBbjZ0aDZH&quot;&#10;}" />
+                  <option name="type" value="JSON" />
+                </bodyState>
+              </option>
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/json" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="45f26757-5767-4fb0-bf2f-64639b0f1e8a" />
+              <option name="method" value="POST" />
+              <option name="name" value="Draft (1)" />
+              <option name="url" value="http://localhost:8080/refreshToken" />
+            </requestState>
+          </list>
+        </option>
+      </draftsState>
+    </option>
+    <option name="id" value="4523b0ba-5606-4156-b025-8d9be471c325" />
+    <option name="version" value="3" />
+  </component>
+</project>
