@@ -27,10 +27,10 @@ const (
 )
 
 // Генерация JWT токена
-func GenerateAccessToken(GUID *Auth) (string, error) {
+func GenerateAccessToken(GUID Auth) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
 		"exp":  time.Now().Add(time.Minute * 120).Unix(),
-		"guid": GUID,
+		"guid": GUID.GUID,
 	})
 	tokenString, err := token.SignedString([]byte(signingKey))
 	if err != nil {
@@ -52,21 +52,21 @@ func GenerateRefreshToken(t *RefreshToken) (string, error) {
 }
 
 // Проверка Refresh токена
-func VerifyRefreshToken(oldToken string, newToken string) (bool, error) {
+func VerifyRefreshToken(oldToken string, newToken string) error {
 	hashRefreshToken, err := base64.StdEncoding.DecodeString(newToken)
 	if err != nil {
-		return false, err
+		return err
 	}
 	err = bcrypt.CompareHashAndPassword(hashRefreshToken, []byte(oldToken))
-	if err == nil {
-		return true, err
+	if err != nil {
+		return err
 	}
-	return false, nil
+	return nil
 }
 
-func ParseToken(acess string) (string, error) {
-	fmt.Println(acess)
-	token, err := jwt.Parse(acess, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(access string) (string, error) {
+	fmt.Println(access)
+	token, err := jwt.Parse(access, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что метод подписи соответствует ожидаемому
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Ожидался метод подписи HS512")
