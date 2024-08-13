@@ -4,10 +4,12 @@ import (
 	"Auth/auth"
 	"Auth/internal/repository/postdb"
 	"fmt"
+	"gopkg.in/gomail.v2"
 	"log"
 	"time"
 )
 
+// Обновление токенов
 func HandleRefreshTokenRequest(t auth.TokenPair, clientIp string) (*auth.TokenPair, error) {
 	token := auth.TokenPair{}
 	GUID := auth.Auth{}
@@ -20,13 +22,15 @@ func HandleRefreshTokenRequest(t auth.TokenPair, clientIp string) (*auth.TokenPa
 	if err != nil {
 		return nil, err
 	}
-	err = VerifyIP(clientIp, bdRefresh.Ip)
-	if err != nil {
+	if err = VerifyExpiredToken(bdRefresh.ExpireAt); err != nil {
+		log.Fatalf("Token expired: %s", err)
+	}
+	if err = VerifyIP(clientIp, bdRefresh.Ip); err != nil {
 		return nil, err
 	}
 	access, err := auth.GenerateAccessToken(GUID)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to generate access token: %s", err)
 	}
 	dataRefreshToken := &auth.RefreshToken{
 		Guid:     GUID,
@@ -38,31 +42,48 @@ func HandleRefreshTokenRequest(t auth.TokenPair, clientIp string) (*auth.TokenPa
 	}
 	token.RefreshToken = refreshToken
 	token.AccessToken = access
-	err = auth.VerifyRefreshToken(token.RefreshToken, guid)
-	if err != nil {
+	if err = auth.VerifyRefreshToken(token.RefreshToken, guid); err != nil {
 		return nil, err
 	}
-	err = auth.VerifyClientRefreshToken(bdRefresh.RefreshToken, t.RefreshToken)
-	if err != nil {
+	if err = auth.VerifyClientRefreshToken(bdRefresh.RefreshToken, t.RefreshToken); err != nil {
 		return nil, err
 	}
-	err = postdb.DeleteUser(guid)
-	if err != nil {
+	if err = postdb.DeleteUser(guid); err != nil {
 		return nil, err
 	}
-	err = postdb.AddUser(clientIp, dataRefreshToken, refreshToken)
-	if err != nil {
+	if err = postdb.AddUser(clientIp, dataRefreshToken, refreshToken); err != nil {
 		return nil, err
 	}
-
 	return &token, nil
 }
 
+// Проверка не сменился ли IP адрес у клиента
 func VerifyIP(ip string, ipBD string) error {
 	if ip == ipBD {
 		return nil
 	} else {
-		return fmt.Errorf("IP изменен на стороне клиента")
-	}
+		m := gomail.NewMessage()
+		m.SetHeader("From", "youricedlatteshop@gmail.com")
+		m.SetHeader("To", "recipient@example.com")
+		m.SetHeader("Subject", "email warning")
+		m.SetBody("text/plain", "email warning")
 
+		d := gomail.NewDialer("smtp.gmail.com", 587, "youricedlatteshop@gmail.com", "kfcf kyba hrab nyij")
+
+		if err := d.DialAndSend(m); err != nil {
+			return fmt.Errorf("Failed to send email: %s", err)
+		}
+
+		fmt.Println("The letter was sent successfully")
+		return fmt.Errorf("IP changed on client side")
+	}
+}
+
+// Проверка не истек ли Refresh токен
+func VerifyExpiredToken(token int64) error {
+	if time.Now().Unix() < token {
+		return nil
+	} else {
+		return fmt.Errorf("Token expired")
+	}
 }

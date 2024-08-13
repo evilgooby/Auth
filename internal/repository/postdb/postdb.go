@@ -3,15 +3,17 @@ package postdb
 import (
 	"Auth/auth"
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq"
 	"log"
+	"time"
 )
 
 func init() {
 	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer db.Close()
 
@@ -32,6 +34,7 @@ func init() {
 	}
 }
 
+// Добавлени данных юзера в БД
 func AddUser(ip string, dataRefresh *auth.RefreshToken, refreshToken string) error {
 	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
@@ -39,7 +42,6 @@ func AddUser(ip string, dataRefresh *auth.RefreshToken, refreshToken string) err
 		return err
 	}
 	defer db.Close()
-	// Добавление данных в таблицу
 	_, err = db.Exec(
 		`INSERT INTO guidbase (ip, guid, refresh_token, expireat) 
             VALUES ($1, $2, $3, $4)
@@ -50,6 +52,7 @@ func AddUser(ip string, dataRefresh *auth.RefreshToken, refreshToken string) err
 	return nil
 }
 
+// Получение данных юзера из БД
 func GetUser(GUID string) (auth.ClientRefreshToken, error) {
 	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
@@ -63,9 +66,14 @@ func GetUser(GUID string) (auth.ClientRefreshToken, error) {
 	if err != nil {
 		return auth.ClientRefreshToken{}, err
 	}
+
+	if time.Now().Unix() == refresh.ExpireAt {
+		return auth.ClientRefreshToken{}, fmt.Errorf("Token expired")
+	}
 	return refresh, nil
 }
 
+// Удаление юзера из БД
 func DeleteUser(GUID string) error {
 	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)

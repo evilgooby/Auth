@@ -8,8 +8,9 @@ import (
 	"time"
 )
 
-func HandleTokenRequest(a auth.Auth, clientIp string) auth.TokenPair {
-	acess, err := auth.GenerateAccessToken(a)
+// Выдача пары токенов
+func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
+	access, err := auth.GenerateAccessToken(a)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,7 +23,7 @@ func HandleTokenRequest(a auth.Auth, clientIp string) auth.TokenPair {
 		log.Fatal(err)
 	}
 	tokenPair := auth.TokenPair{
-		AccessToken:  acess,
+		AccessToken:  access,
 		RefreshToken: refreshToken,
 	}
 	res, err := postdb.GetUser(a.GUID)
@@ -32,8 +33,7 @@ func HandleTokenRequest(a auth.Auth, clientIp string) auth.TokenPair {
 	if res.RefreshToken == "" {
 		postdb.AddUser(clientIp, dataRefreshToken, refreshToken)
 	} else {
-		postdb.DeleteUser(a.GUID)
-		postdb.AddUser(clientIp, dataRefreshToken, refreshToken)
+		log.Fatalf("User with guid %s already have refresh token", a.GUID)
 	}
-	return tokenPair
+	return tokenPair, nil
 }

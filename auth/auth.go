@@ -71,30 +71,28 @@ func VerifyClientRefreshToken(tokenBD, tokenClient string) error {
 	if tokenClient == tokenBD {
 		return nil
 	} else {
-		return fmt.Errorf("Токен изменен на стороне клиента")
+		return fmt.Errorf("Token modified on client side")
 	}
 }
 
+// Парсинг Access токена для получения GUID
 func ParseToken(access string) (string, error) {
-	fmt.Println(access)
 	token, err := jwt.Parse(access, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что метод подписи соответствует ожидаемому
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Ожидался метод подписи HS512")
+			return nil, fmt.Errorf("HS512 update method expected")
 		}
 		// Возвращаем секретный ключ для проверки подписи
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		guid, _ := claims["Guid"].(string)
 		return guid, nil
 	} else {
-		panic("Токен недействителен")
+		return "", fmt.Errorf("Token is invalid")
 	}
-
-	return "", nil
 }
