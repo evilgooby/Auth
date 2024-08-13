@@ -4,7 +4,6 @@ import (
 	"Auth/auth"
 	"Auth/internal/repository/postdb"
 	"fmt"
-	"log"
 	"time"
 )
 
@@ -12,7 +11,7 @@ import (
 func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
 	access, err := auth.GenerateAccessToken(a)
 	if err != nil {
-		log.Fatal(err)
+		return auth.TokenPair{}, err
 	}
 	dataRefreshToken := &auth.RefreshToken{
 		Guid:     a,
@@ -20,7 +19,7 @@ func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
 	}
 	refreshToken, err := auth.GenerateRefreshToken(dataRefreshToken)
 	if err != nil {
-		log.Fatal(err)
+		return auth.TokenPair{}, err
 	}
 	tokenPair := auth.TokenPair{
 		AccessToken:  access,
@@ -28,12 +27,12 @@ func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
 	}
 	res, err := postdb.GetUser(a.GUID)
 	if err != nil {
-		fmt.Println(err)
+		return auth.TokenPair{}, err
 	}
 	if res.RefreshToken == "" {
 		postdb.AddUser(clientIp, dataRefreshToken, refreshToken)
 	} else {
-		log.Fatalf("User with guid %s already have refresh token", a.GUID)
+		return auth.TokenPair{}, fmt.Errorf("User with guid %s already have refresh token", a.GUID)
 	}
 	return tokenPair, nil
 }

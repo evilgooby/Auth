@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
+	const connStr = "postgres://postgres:1234@postgres:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +36,7 @@ func init() {
 
 // Добавлени данных юзера в БД
 func AddUser(ip string, dataRefresh *auth.RefreshToken, refreshToken string) error {
-	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
+	const connStr = "postgres://postgres:1234@postgres:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err
@@ -54,7 +54,7 @@ func AddUser(ip string, dataRefresh *auth.RefreshToken, refreshToken string) err
 
 // Получение данных юзера из БД
 func GetUser(GUID string) (auth.ClientRefreshToken, error) {
-	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
+	const connStr = "postgres://postgres:1234@postgres:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return auth.ClientRefreshToken{}, err
@@ -64,7 +64,7 @@ func GetUser(GUID string) (auth.ClientRefreshToken, error) {
 	refresh := auth.ClientRefreshToken{}
 	err = db.QueryRow(`SELECT ip, refresh_token, expireat FROM guidbase WHERE guid = $1`, GUID).Scan(&refresh.Ip, &refresh.RefreshToken, &refresh.ExpireAt)
 	if err != nil {
-		return auth.ClientRefreshToken{}, err
+		return auth.ClientRefreshToken{}, nil
 	}
 
 	if time.Now().Unix() == refresh.ExpireAt {
@@ -75,7 +75,7 @@ func GetUser(GUID string) (auth.ClientRefreshToken, error) {
 
 // Удаление юзера из БД
 func DeleteUser(GUID string) error {
-	const connStr = "postgres://postgres:2412@localhost:5432/mydb?sslmode=disable"
+	const connStr = "postgres://postgres:1234@postgres:5432/mydb?sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return err

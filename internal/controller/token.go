@@ -18,7 +18,7 @@ func AddToken(c *gin.Context) {
 	clientIP := c.ClientIP()
 	token, err := service.HandleTokenRequest(aut, clientIP)
 	if err != nil {
-		log.Fatal(err)
+		c.Error(err)
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  token.AccessToken,
@@ -35,7 +35,7 @@ func RefreshToken(c *gin.Context) {
 	clientIP := c.ClientIP()
 	token, err := service.HandleRefreshTokenRequest(tokenPair, clientIP)
 	if err != nil {
-		log.Fatal(err)
+		c.Error(err)
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  token.AccessToken,
