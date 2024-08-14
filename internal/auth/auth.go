@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"Auth/internal/middleware"
 	"encoding/base64"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -37,7 +37,7 @@ func GenerateAccessToken(GUID Auth) (string, error) {
 	})
 	tokenString, err := token.SignedString([]byte(signingKey))
 	if err != nil {
-		return "", err
+		return "", middleware.ErrInternalServerError
 	}
 	return tokenString, nil
 }
@@ -47,7 +47,7 @@ func GenerateRefreshToken(t *RefreshToken) (string, error) {
 	refreshToken := []byte(t.Guid.GUID)
 	hashRefreshToken, err := bcrypt.GenerateFromPassword(refreshToken, bcrypt.DefaultCost)
 	if err != nil {
-		return "", err
+		return "", middleware.ErrInternalServerError
 	}
 	refresh := base64.StdEncoding.EncodeToString(hashRefreshToken)
 	return refresh, nil
@@ -57,11 +57,11 @@ func GenerateRefreshToken(t *RefreshToken) (string, error) {
 func VerifyRefreshToken(newToken string, guid string) error {
 	hashRefreshToken, err := base64.StdEncoding.DecodeString(newToken)
 	if err != nil {
-		return err
+		return middleware.ErrInternalServerError
 	}
 	err = bcrypt.CompareHashAndPassword(hashRefreshToken, []byte(guid))
 	if err != nil {
-		return err
+		return middleware.ErrInternalServerError
 	}
 	return nil
 }
@@ -71,28 +71,28 @@ func VerifyClientRefreshToken(tokenBD, tokenClient string) error {
 	if tokenClient == tokenBD {
 		return nil
 	} else {
-		return fmt.Errorf("token modified on client side")
+		return middleware.ErrTokenChange
 	}
 }
 
 // Парсинг Access токена для получения GUID
-func ParseToken(access string) (string, error) {
+func ParseToken(access string) (*Auth, error) {
+	auth := &Auth{}
 	token, err := jwt.Parse(access, func(token *jwt.Token) (interface{}, error) {
-		// Проверяем, что метод подписи соответствует ожидаемому
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("HS512 update method expected")
+			return nil, middleware.ErrInternalServerError
 		}
-		// Возвращаем секретный ключ для проверки подписи
 		return []byte(signingKey), nil
 	})
 	if err != nil {
-		return "", err
+		return nil, middleware.ErrInternalServerError
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		guid, _ := claims["Guid"].(string)
-		return guid, nil
+		auth.GUID = guid
+		return auth, nil
 	} else {
-		return "", fmt.Errorf("token is invalid")
+		return nil, middleware.ErrInternalServerError
 	}
 }

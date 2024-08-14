@@ -15,7 +15,7 @@ func AddToken(c *gin.Context) {
 		return
 	}
 	clientIP := c.ClientIP()
-	token, err := service.HandleTokenRequest(aut, clientIP, c)
+	token, err := service.HandleTokenRequest(c, aut, clientIP)
 	if err != nil {
 		middleware.ErrorHandler(c)
 		return
@@ -33,7 +33,7 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 	clientIP := c.ClientIP()
-	token, err := service.HandleRefreshTokenRequest(tokenPair, clientIP, c)
+	token, err := service.HandleRefreshTokenRequest(c, tokenPair, clientIP)
 	if err != nil {
 		middleware.ErrorHandler(c)
 		return

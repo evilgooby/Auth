@@ -2,22 +2,20 @@ package controller
 
 import (
 	"Auth/internal/middleware"
-	"Auth/internal/repository/postdb"
 	"github.com/gin-gonic/gin"
 	"log"
 )
 
-func Registre() {
-	r := gin.New()
+const port = ":8080"
+
+func Registry() {
+	r := gin.Default()
 	r.Use(middleware.ErrorHandler)
 
 	r.POST("/addToken", AddToken)
 	r.POST("/refreshToken", RefreshToken)
-	err := postdb.InitialPostgres()
-	if err != nil {
-		log.Println("Failed to start the web server - Error: %v", err)
-	}
-	err = r.Run(":8080")
+
+	err := r.Run(port)
 	if err != nil {
 		log.Fatalf("Failed to start the web server - Error: %v", err)
 	}

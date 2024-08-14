@@ -13,6 +13,9 @@ var (
 	ErrInvalidToken        = fmt.Errorf("invalid token")
 	ErrExpiredToken        = fmt.Errorf("token expired")
 	ErrDB                  = fmt.Errorf("database error")
+	ErrIpChange            = fmt.Errorf("IP changed on client side")
+	ErrEmailSend           = fmt.Errorf("failed to send email")
+	ErrTokenChange         = fmt.Errorf("the token is changed on the client side")
 )
 
 func ErrorHandler(c *gin.Context) {
@@ -38,8 +41,8 @@ func ErrorHandler(c *gin.Context) {
 		case ErrDB:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": ErrDB.Error()})
 			return
+		default:
+			c.JSON(418, gin.H{"error": "I'm a teapot"})
 		}
 	}
-
-	c.JSON(http.StatusInternalServerError, "")
 }
