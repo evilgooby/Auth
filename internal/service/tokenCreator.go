@@ -1,17 +1,18 @@
 package service
 
 import (
-	"Auth/auth"
+	"Auth/internal/auth"
+	"Auth/internal/middleware"
 	"Auth/internal/repository/postdb"
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"time"
 )
 
 // Выдача пары токенов
-func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
+func HandleTokenRequest(a auth.Auth, clientIp string, c *gin.Context) (auth.TokenPair, error) {
 	access, err := auth.GenerateAccessToken(a)
 	if err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInternalServerError)
 	}
 	dataRefreshToken := &auth.RefreshToken{
 		Guid:     a,
@@ -19,7 +20,7 @@ func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
 	}
 	refreshToken, err := auth.GenerateRefreshToken(dataRefreshToken)
 	if err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInternalServerError)
 	}
 	tokenPair := auth.TokenPair{
 		AccessToken:  access,
@@ -27,12 +28,12 @@ func HandleTokenRequest(a auth.Auth, clientIp string) (auth.TokenPair, error) {
 	}
 	res, err := postdb.GetUser(a.GUID)
 	if err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(err)
 	}
 	if res.RefreshToken == "" {
 		postdb.AddUser(clientIp, dataRefreshToken, refreshToken)
 	} else {
-		return auth.TokenPair{}, fmt.Errorf("User with guid %s already have refresh token", a.GUID)
+		return auth.TokenPair{}, c.Error(err)
 	}
 	return tokenPair, nil
 }

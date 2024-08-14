@@ -71,7 +71,7 @@ func VerifyClientRefreshToken(tokenBD, tokenClient string) error {
 	if tokenClient == tokenBD {
 		return nil
 	} else {
-		return fmt.Errorf("Token modified on client side")
+		return fmt.Errorf("token modified on client side")
 	}
 }
 
@@ -93,6 +93,6 @@ func ParseToken(access string) (string, error) {
 		guid, _ := claims["Guid"].(string)
 		return guid, nil
 	} else {
-		return "", fmt.Errorf("Token is invalid")
+		return "", fmt.Errorf("token is invalid")
 	}
 }

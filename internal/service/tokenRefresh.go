@@ -1,9 +1,11 @@
 package service
 
 import (
-	"Auth/auth"
+	"Auth/internal/auth"
+	"Auth/internal/middleware"
 	"Auth/internal/repository/postdb"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gopkg.in/gomail.v2"
 	"log"
@@ -12,27 +14,27 @@ import (
 )
 
 // Обновление токенов
-func HandleRefreshTokenRequest(t auth.TokenPair, clientIp string) (auth.TokenPair, error) {
+func HandleRefreshTokenRequest(t auth.TokenPair, clientIp string, c *gin.Context) (auth.TokenPair, error) {
 	token := auth.TokenPair{}
 	GUID := auth.Auth{}
 	guid, err := auth.ParseToken(t.AccessToken)
 	if err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInvalidToken)
 	}
 	GUID = auth.Auth{GUID: guid}
 	bdRefresh, err := postdb.GetUser(guid)
 	if err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInternalServerError)
 	}
 	if err = VerifyExpiredToken(bdRefresh.ExpireAt); err != nil {
-		return auth.TokenPair{}, fmt.Errorf("Token expired: %s", err)
+		return auth.TokenPair{}, c.Error(middleware.ErrExpiredToken)
 	}
 	if err = VerifyIP(clientIp, bdRefresh.Ip); err != nil {
 		return auth.TokenPair{}, err
 	}
 	access, err := auth.GenerateAccessToken(GUID)
 	if err != nil {
-		return auth.TokenPair{}, fmt.Errorf("Failed to generate access token: %s", err)
+		return auth.TokenPair{}, c.Error(middleware.ErrInternalServerError)
 	}
 	dataRefreshToken := &auth.RefreshToken{
 		Guid:     GUID,
@@ -40,21 +42,21 @@ func HandleRefreshTokenRequest(t auth.TokenPair, clientIp string) (auth.TokenPai
 	}
 	refreshToken, err := auth.GenerateRefreshToken(dataRefreshToken)
 	if err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInternalServerError)
 	}
 	token.RefreshToken = refreshToken
 	token.AccessToken = access
 	if err = auth.VerifyRefreshToken(token.RefreshToken, guid); err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInvalidToken)
 	}
 	if err = auth.VerifyClientRefreshToken(bdRefresh.RefreshToken, t.RefreshToken); err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrInvalidToken)
 	}
 	if err = postdb.DeleteUser(guid); err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrDB)
 	}
 	if err = postdb.AddUser(clientIp, dataRefreshToken, refreshToken); err != nil {
-		return auth.TokenPair{}, err
+		return auth.TokenPair{}, c.Error(middleware.ErrDB)
 	}
 	return token, nil
 }

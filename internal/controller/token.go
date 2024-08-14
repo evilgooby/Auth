@@ -1,24 +1,24 @@
 package controller
 
 import (
-	"Auth/auth"
+	"Auth/internal/auth"
+	"Auth/internal/middleware"
 	"Auth/internal/service"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
 func AddToken(c *gin.Context) {
 	var aut auth.Auth
 	if err := c.ShouldBindJSON(&aut); err != nil {
-		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid JSON provided"})
 		return
 	}
 	clientIP := c.ClientIP()
-	token, err := service.HandleTokenRequest(aut, clientIP)
+	token, err := service.HandleTokenRequest(aut, clientIP, c)
 	if err != nil {
-		c.Error(err)
+		middleware.ErrorHandler(c)
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  token.AccessToken,
@@ -33,9 +33,10 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 	clientIP := c.ClientIP()
-	token, err := service.HandleRefreshTokenRequest(tokenPair, clientIP)
+	token, err := service.HandleRefreshTokenRequest(tokenPair, clientIP, c)
 	if err != nil {
-		c.Error(err)
+		middleware.ErrorHandler(c)
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  token.AccessToken,
