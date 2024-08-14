@@ -4,63 +4,6 @@
     <option name="requestHistoryStates">
       <list>
         <requestHistoryState>
-          <option name="dateTime" value="1723649831660" />
-          <option name="id" value="b021e2b1-eb03-4884-9fb9-78936ff36225" />
-          <option name="request">
-            <requestState>
-              <option name="body">
-                <bodyState>
-                  <option name="raw" value="{&#10;  &quot;guid&quot;: &quot;9187b97e-21bb-4925-824c-1816935730e2&quot;&#10;}" />
-                  <option name="type" value="JSON" />
-                </bodyState>
-              </option>
-              <option name="headers">
-                <list>
-                  <headerState>
-                    <option name="key" value="Content-Type" />
-                    <option name="value" value="application/json" />
-                  </headerState>
-                </list>
-              </option>
-              <option name="id" value="d6cea696-e56a-4e54-9fa9-a1cec2c3d821" />
-              <option name="method" value="POST" />
-              <option name="name" value="Draft" />
-              <option name="url" value="http://localhost:8080/addToken" />
-            </requestState>
-          </option>
-          <option name="response">
-            <responseState>
-              <option name="bodyBytesBase64" value="eyJlcnJvciI6InVzZXIgd2l0aCBndWlkIGFscmVhZHkgaGF2ZSByZWZyZXNoIHRva2VuIn17ImVycm9yIjoidXNlciB3aXRoIGd1aWQgYWxyZWFkeSBoYXZlIHJlZnJlc2ggdG9rZW4ifQ==" />
-              <option name="bodyString" value="{&#10;  &quot;error&quot;: &quot;user with guid already have refresh token&quot;&#10;}" />
-              <option name="code" value="400" />
-              <option name="contentType" value="application/json; charset=utf-8" />
-              <option name="headers">
-                <list>
-                  <headerState>
-                    <option name="key" value="Content-Type" />
-                    <option name="value" value="application/json; charset=utf-8" />
-                  </headerState>
-                  <headerState>
-                    <option name="key" value="Date" />
-                    <option name="value" value="Wed, 14 Aug 2024 15:37:11 GMT" />
-                  </headerState>
-                  <headerState>
-                    <option name="key" value="Content-Length" />
-                    <option name="value" value="106" />
-                  </headerState>
-                </list>
-              </option>
-              <option name="id" value="b021e2b1-eb03-4884-9fb9-78936ff36225" />
-              <option name="message" value="Bad Request" />
-              <option name="prettyResponseType" value="JSON" />
-              <option name="rawBodyString" value="{&quot;error&quot;:&quot;user with guid already have refresh token&quot;}{&quot;error&quot;:&quot;user with guid already have refresh token&quot;}" />
-              <option name="size" value="106" />
-              <option name="time" value="56" />
-            </responseState>
-          </option>
-          <option name="workspaceId" value="drafts" />
-        </requestHistoryState>
-        <requestHistoryState>
           <option name="dateTime" value="1723649988777" />
           <option name="id" value="496099b8-b758-4e5b-9061-4454da9a98d5" />
           <option name="request">
@@ -1138,6 +1081,63 @@
               <option name="rawBodyString" value="{&quot;access_token&quot;:&quot;eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJFeHBpcmVBdCI6MTcyMzY2NTQ1NSwiR3VpZCI6Ijc3MzY5N2JiLTNjNjUtNDU5Yy04YWFhLWQzY2I1ZTkwMjMzZyJ9.AG5D26TnAFPBhbXs39cGYCWVpEdQq99FUQtpnTQa7xfolE1syWstWB9bIeYGBEjIUM_QrKKC_1774zcEjny2QQ&quot;,&quot;refresh_token&quot;:&quot;JDJhJDEwJHJlcExqTzZkSGEwWEp5RFpKQTRLRi5qM3NSUjJqTUVXckY3WnpiSkZLVUUyM1pnUGZwazFT&quot;}" />
               <option name="size" value="334" />
               <option name="time" value="115" />
+            </responseState>
+          </option>
+          <option name="workspaceId" value="drafts" />
+        </requestHistoryState>
+        <requestHistoryState>
+          <option name="dateTime" value="1723659592368" />
+          <option name="id" value="3f097150-2a22-45ff-9ad5-3fa89dc327da" />
+          <option name="request">
+            <requestState>
+              <option name="body">
+                <bodyState>
+                  <option name="raw" value="{&#10;  &quot;guid&quot;: &quot;773697bb-3c65-459c-8aaa-d3cb5e90233g&quot;&#10;}" />
+                  <option name="type" value="JSON" />
+                </bodyState>
+              </option>
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/json" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="d6cea696-e56a-4e54-9fa9-a1cec2c3d821" />
+              <option name="method" value="POST" />
+              <option name="name" value="Draft" />
+              <option name="url" value="http://localhost:8080/addToken" />
+            </requestState>
+          </option>
+          <option name="response">
+            <responseState>
+              <option name="bodyBytesBase64" value="eyJhY2Nlc3NfdG9rZW4iOiJleUpoYkdjaU9pSklVelV4TWlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKRmVIQnBjbVZCZENJNk1UY3lNelkyTmpjNU1pd2lSM1ZwWkNJNklqYzNNelk1TjJKaUxUTmpOalV0TkRVNVl5MDRZV0ZoTFdRelkySTFaVGt3TWpNelp5SjkuRUdHTXZnbGN0V0RKeHc5UHRMNlR2OXE4aVQyWUFVUXd5dkszclZkbi0zWnVBQkY1ek9tc0xwOHFTU3Z6TVE5M242NjlkY0RFMlYxSWJhaG80Y1BTMXciLCJyZWZyZXNoX3Rva2VuIjoiSkRKaEpERXdKRlk0UzFWUGJYZG1lWEJRWVVjd2JrMXlielZIUkM0M2RsSnRiM2QwVVdOc1pFUTRWMjlNYTFaa1RYRjBSMGRMU0haMVVuaGwifQ==" />
+              <option name="bodyString" value="{&#10;  &quot;access_token&quot;: &quot;eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJFeHBpcmVBdCI6MTcyMzY2Njc5MiwiR3VpZCI6Ijc3MzY5N2JiLTNjNjUtNDU5Yy04YWFhLWQzY2I1ZTkwMjMzZyJ9.EGGMvglctWDJxw9PtL6Tv9q8iT2YAUQwyvK3rVdn-3ZuABF5zOmsLp8qSSvzMQ93n669dcDE2V1Ibaho4cPS1w&quot;,&#10;  &quot;refresh_token&quot;: &quot;JDJhJDEwJFY4S1VPbXdmeXBQYUcwbk1ybzVHRC43dlJtb3d0UWNsZEQ4V29Ma1ZkTXF0R0dLSHZ1Unhl&quot;&#10;}" />
+              <option name="code" value="200" />
+              <option name="contentType" value="application/json; charset=utf-8" />
+              <option name="headers">
+                <list>
+                  <headerState>
+                    <option name="key" value="Content-Type" />
+                    <option name="value" value="application/json; charset=utf-8" />
+                  </headerState>
+                  <headerState>
+                    <option name="key" value="Date" />
+                    <option name="value" value="Wed, 14 Aug 2024 18:19:52 GMT" />
+                  </headerState>
+                  <headerState>
+                    <option name="key" value="Content-Length" />
+                    <option name="value" value="334" />
+                  </headerState>
+                </list>
+              </option>
+              <option name="id" value="3f097150-2a22-45ff-9ad5-3fa89dc327da" />
+              <option name="message" value="OK" />
+              <option name="prettyResponseType" value="JSON" />
+              <option name="rawBodyString" value="{&quot;access_token&quot;:&quot;eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJFeHBpcmVBdCI6MTcyMzY2Njc5MiwiR3VpZCI6Ijc3MzY5N2JiLTNjNjUtNDU5Yy04YWFhLWQzY2I1ZTkwMjMzZyJ9.EGGMvglctWDJxw9PtL6Tv9q8iT2YAUQwyvK3rVdn-3ZuABF5zOmsLp8qSSvzMQ93n669dcDE2V1Ibaho4cPS1w&quot;,&quot;refresh_token&quot;:&quot;JDJhJDEwJFY4S1VPbXdmeXBQYUcwbk1ybzVHRC43dlJtb3d0UWNsZEQ4V29Ma1ZkTXF0R0dLSHZ1Unhl&quot;}" />
+              <option name="size" value="334" />
+              <option name="time" value="65" />
             </responseState>
           </option>
           <option name="workspaceId" value="drafts" />
